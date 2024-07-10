@@ -1,0 +1,348 @@
+---
+title: "Fall_Data_SA15 updated ARI plot"
+author: "Jovana Mitic"
+date: '2024-06-12'
+output: htm_document
+---
+
+```{r plot-data}
+library(MASS)
+library(mclust)
+library(ggplot2)
+library(dplyr)
+library(purrr)
+library(knitr)
+library(reshape2)
+library(gridExtra)
+
+big_data <- read.table("C:/Users/jovan/Downloads/FallData_all.txt", header = TRUE)
+subject <- "SA15"
+selected_variables <- c("max", "min", "max_diff")
+subject_data <- subset(big_data, Subject == subject)
+selected_data <- subject_data[, selected_variables]
+output_directory <- 'C:/Users/jovan/OneDrive/Desktop/Stat Reading Group'
+
+# Create ggplot2 plots
+plot1 <- ggplot(selected_data, aes(x = max, y = min)) +
+  geom_point(size = 2) +
+  labs(title = paste("Data for subject", subject),
+       x = "Max",
+       y = "Min") +
+  theme_minimal()
+
+plot2 <- ggplot(selected_data, aes(x = min, y = max_diff)) +
+  geom_point(size = 2) +
+  labs(title = paste("Data for subject", subject),
+       x = "Min",
+       y = "Max_diff") +
+  theme_minimal()
+
+plot3 <- ggplot(selected_data, aes(x = max, y = max_diff)) +
+  geom_point(size = 2) +  # Increase point size for better visibility
+  labs(title = paste("Data for subject", subject),
+       x = "Max",
+       y = "Max_diff") +
+  theme_minimal() +
+  guides(shape = guide_legend(override.aes = list(size = 2)))  # Adjust legend size
+grid.arrange(plot1, plot2,plot3, ncol = 3)
+
+```
+
+```{r best-model-selection}
+G_values <- 1:10
+model_names <- c("EVI", "EEI", "EEV", "VVV", "EII")
+best_bic <- -Inf
+best_G <- NULL
+best_model_name <- NULL
+
+for (model_name in model_names) {
+  for (G in G_values) {
+    result <- tryCatch(Mclust(selected_data, G = G, modelName = model_name), error = function(e) NULL)
+    if (!is.null(result) && !is.null(result$BIC) && result$BIC > best_bic) {
+      best_bic <- result$BIC
+      best_G <- G
+      best_model_name <- model_name
+    }
+  }
+}
+
+best_G
+best_model_name
+
+```
+In the analysis of the data for subject SA15, we aimed to identify the best clustering model using the Mclust algorithm, which fits Gaussian finite mixture models to the data. The model selection was based on the Bayesian Information Criterion (BIC) values obtained for different combinations of model types and the number of clusters (G).
+
+After evaluating various models and cluster counts, the model with the highest BIC value was identified as the EVI model with 6 clusters. EVI Model Description: The covariance matrices are ellipsoidal, meaning each cluster can have its own general shape (ellipsoids) which allows for modeling of data with different variances and covariances in different directions.
+Equal Volume: All clusters have the same volume. This constraint is reflected in the determinant of the covariance matrix being equal across all clusters.
+Equal Shape: All clusters have the same shape. This means that the eigenvalues of the covariance matrices, after adjusting for volume, are the same for all clusters.
+Variable Orientation: The orientation of the ellipsoids can vary between clusters. This means that the eigenvectors (directions of the principal components) can be different for different clusters.\\
+```{r plot-best-clustering}
+result <- Mclust(selected_data, G = 6, modelName = "EVI")
+cluster_labels <- result$classification
+
+
+plot1 <- ggplot(selected_data, aes(x = max, y = min, color = as.factor(cluster_labels))) +
+  geom_point(size = 2) +  # Increase point size for better visibility
+  scale_color_discrete(name = "Cluster Labels") +
+  labs(title = "Max vs Min") +
+  theme_minimal() +
+  guides(shape = guide_legend(override.aes = list(size = 2)))  # Adjust legend size
+
+plot2 <- ggplot(selected_data, aes(x = min, y = max_diff, color = as.factor(cluster_labels))) +
+  geom_point(size = 2) +  # Increase point size for better visibility
+  scale_color_discrete(name = "Cluster Labels") +
+  labs(title = "Min vs Max_diff") +
+  theme_minimal() +
+  guides(shape = guide_legend(override.aes = list(size = 2)))  # Adjust legend size
+
+plot3 <- ggplot(selected_data, aes(x = max, y = max_diff, color = as.factor(cluster_labels))) +
+  geom_point(size = 2) +  # Increase point size for better visibility
+  scale_color_discrete(name = "Cluster Labels") +
+  labs(title = "Max vs Max_diff") +
+  theme_minimal() +
+  guides(shape = guide_legend(override.aes = list(size = 2)))
+print(plot3)
+print(plot2)
+print(plot1)
+```
+```{r uncertainty_plots}
+par(mfrow=c(1,2), cex=0.7, mar=c(3.1,4.1,1,0.5), mgp=c(1.8,0.5,0), bty="L", oma=c(0,0,1,0))
+
+
+# Uncertainty plot
+plot(result, what = "uncertainty")
+
+# Classification plot with ellipses
+plot(result, what = "classification")
+
+```
+The uncertainty Plot provides a visual representation of the uncertainty in the assignment of each data point to the identified clusters. Helps in understanding the spread and orientation of clusters using ellipses. Points with lighter colors are more uncertain in their cluster assignment, while darker points are more confidently assigned. High uncertainty in certain areas might suggest the presence of overlapping clusters or regions where the data does not distinctly separate into the specified number of clusters.\\
+The classification plot displays the data points color-coded by their assigned cluster, with ellipses representing the estimated boundaries of each cluster. These ellipses are derived from the Gaussian mixture model used in the clustering process, showing the spread and orientation of each cluster. Points within the same ellipse are more similar to each other than to points outside.
+
+```{r ari_results}
+calculate_ari <- function(n_fraction) {
+  n <- nrow(selected_data)
+  n_subsample <- floor(n * n_fraction)
+  
+  ari_values <- numeric(20)
+  
+  for (i in 1:20) {
+    subset_indices <- sample(1:n, n_subsample, replace = FALSE)
+    subset_data <- selected_data[subset_indices, ]
+    subset_result <- tryCatch(Mclust(subset_data, G = best_G, modelName = best_model_name), error = function(e) NULL)
+    
+    if (!is.null(subset_result) && !is.null(subset_result$classification)) {
+      subset_classification <- subset_result$classification
+      ari_values[i] <- adjustedRandIndex(result$classification[subset_indices], subset_classification)
+    } else {
+      ari_values[i] <- NA
+    }
+  }
+  
+  return(ari_values)
+}
+
+n_values <- c(3/4, 1/2, 1/4)
+ari_results <- map_df(n_values, function(n) {
+  ari <- calculate_ari(n)
+  data.frame(n_fraction = rep(n, length(ari)), ARI = ari)
+})
+
+ari_results <- ari_results %>% filter(!is.na(ARI))
+print(ari_results)
+```
+The stability analysis conducted above provide insights into the robustness of the clustering algorithm across different subsample fractions (n_fraction) for a given dataset. The Adjusted Rand Index (ARI) values computed represent the degree of similarity between the clustering results obtained from subsets of the data.\\
+The Adjusted Rand Index (ARI) results provide insight into the stability and consistency of clustering as the size of the data fraction (n_fraction) changes. When n=0.75, the ARI values range from 0.5256939 to 1.0000000, with most values clustering around higher scores, indicating a generally stable clustering performance with some variability. When the data fraction is reduced to 0.50 the ARI scores range from 0.4307185 to 1.0000000, suggesting slightly less stability. Finally, at n=0.25, the ARI ranges from 0.5289797 to 1.0000000, and show a decrease in consistency compared to higher data fractions. This pattern indicates that while high ARI scores can still be achieved with smaller data fractions, the clustering performance becomes less stable and more sensitive to data size reduction.
+
+```{r plot-ari}
+
+# Calculate the average ARI for each n_fraction
+average_ari <- ari_results %>%
+  group_by(n_fraction) %>%
+  summarize(avg_ari = mean(ARI))
+
+# Plot ARI values against n values
+ggplot(ari_results, aes(x = as.factor(n_fraction), y = ARI)) +
+  geom_point(color = "skyblue", size = 3) +
+  geom_point(data = average_ari, aes(y = avg_ari), color = "red", size = 4, shape = 18) +
+  labs(x = "n Fraction", y = "ARI", title = "ARI Values for G = 2") +
+  theme_minimal()
+
+
+
+
+```
+
+Now, we will perform the same  analysis but for G=3 (EEV), G=4 (VVV), and G=5 (EEV).
+```{r ari_moreGvalues}
+find_best_model <- function(data, G) {
+  model_names <- c("EVI", "EEI", "EEV", "VVV", "EII")
+  best_bic <- -Inf
+  best_model_name <- NULL
+
+  for (model_name in model_names) {
+    result <- tryCatch(Mclust(data, G = G, modelName = model_name), error = function(e) NULL)
+    if (!is.null(result) && !is.null(result$BIC) && result$BIC > best_bic) {
+      best_bic <- result$BIC
+      best_model_name <- model_name
+    }
+  }
+  
+  return(best_model_name)
+}
+G_values <- 1:9
+best_models <- list()
+
+for (G in G_values) {
+  best_model_name <- find_best_model(selected_data, G)
+  best_models[[as.character(G)]] <- best_model_name
+}
+
+# Print the best models for each G
+print(best_models)
+calculate_ari <- function(n_fraction, G, best_model_name) {
+  n <- nrow(selected_data)
+  n_subsample <- floor(n * n_fraction)
+  
+  ari_values <- numeric(20)
+  
+  for (i in 1:20) {
+    subset_indices <- sample(1:n, n_subsample, replace = FALSE)
+    subset_data <- selected_data[subset_indices, ]
+    subset_result <- tryCatch(Mclust(subset_data, G = G, modelName = best_model_name), error = function(e) NULL)
+    
+    if (!is.null(subset_result) && !is.null(subset_result$classification)) {
+      subset_classification <- subset_result$classification
+      ari_values[i] <- adjustedRandIndex(result$classification[subset_indices], subset_classification)
+    } else {
+      ari_values[i] <- NA
+    }
+  }
+  
+  return(ari_values)
+}
+
+# Perform ARI stability analysis for different G values and subsample fractions
+n_values <- c(3/4, 1/2, 1/4)
+ari_results_list <- list()
+
+for (G in G_values) {
+  best_model_name <- best_models[[as.character(G)]]
+  ari_results <- map_df(n_values, function(n) {
+    ari <- calculate_ari(n, G, best_model_name)
+    data.frame(n_fraction = rep(n, length(ari)), G = rep(G, length(ari)), ARI = ari)
+  })
+  ari_results_list[[as.character(G)]] <- ari_results %>% filter(!is.na(ARI))
+}
+
+# Combine results from all G values
+final_ari_results <- bind_rows(ari_results_list)
+
+# Filter ARI results for each G value
+ari_results_G1 <- final_ari_results %>% filter(G == 1)
+ari_results_G2 <- final_ari_results %>% filter(G == 2)
+ari_results_G3 <- final_ari_results %>% filter(G == 3)
+ari_results_G4 <- final_ari_results %>% filter(G == 4)
+ari_results_G5 <- final_ari_results %>% filter(G == 5)
+ari_results_G6 <- final_ari_results %>% filter(G == 6)
+ari_results_G7 <- final_ari_results %>% filter(G == 7)
+ari_results_G8 <- final_ari_results %>% filter(G == 8)
+ari_results_G9 <- final_ari_results %>% filter(G == 9)
+
+
+
+# Print the ARI results for each G value
+#print("ARI results for G = 3:")
+#print(ari_results_G3)
+
+#print("ARI results for G = 4:")
+#print(ari_results_G4)
+
+#print("ARI results for G = 5:")
+#print(ari_results_G5)
+
+# Plot the ARI results
+ggplot(final_ari_results, aes(x = as.factor(G), y = ARI, fill = as.factor(n_fraction))) +
+  geom_boxplot() +
+  labs(title = "ARI Stability Analysis for Different G Values",
+       x = "Number of Components (G)",
+       y = "Adjusted Rand Index (ARI)",
+       fill = "Subsample Fraction") +
+  theme_minimal()
+```
+
+`
+```{r bic-stability}
+library(mclust)
+
+# Load the data
+big_data <- read.table('C:/Users/jovan/Downloads/FallData_all.txt', header = TRUE)
+se05_data <- subset(big_data, Subject == "SA15")
+selected_variables <- c("max", "min", "max_diff")
+se05_selected_data <- se05_data[, selected_variables]
+
+# Define parameters
+G_values <- c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
+num_repetitions <- 10
+model_names <- c("EVI", "EEI", "EEV", "VVV", "EII")
+bic_values_list <- list()
+
+# Loop over each model name and G value
+for (model_name in model_names) {
+  for (G in G_values) {
+    bic_values <- numeric(num_repetitions)
+    
+    # Loop over each repetition
+    for (rep in 1:num_repetitions) {
+      # Error handling for Mclust function
+      tryCatch({
+        result <- Mclust(se05_selected_data, G = G, modelName = model_name)
+        if (!is.null(result$BIC) && is.numeric(result$BIC)) {
+          bic_values[rep] <- round(result$BIC, digits = 1)  # Round to the nearest tenth
+        } else {
+          bic_values[rep] <- NA  # Assign NA if result$BIC is not numeric or NULL
+        }
+      }, error = function(e) {
+        bic_values[rep] <- NA  # Assign NA if there's an error
+      })
+    }
+    
+    bic_values_list[[paste(model_name, "_G", G, sep = "")]] <- bic_values
+  }
+}
+
+# Initialize the summary table
+summary_table <- data.frame(G = integer(), Highest_BIC = numeric(), Model_Name = character(), stringsAsFactors = FALSE)
+
+# Populate the summary table
+for (G in G_values) {
+  max_bic <- -Inf
+  best_model <- NA
+  
+  for (model_name in model_names) {
+    key <- paste(model_name, "_G", G, sep = "")
+    bic_values <- bic_values_list[[key]]
+    
+    if (!is.null(bic_values) && any(!is.na(bic_values))) {
+      current_max_bic <- max(bic_values, na.rm = TRUE)
+      if (current_max_bic > max_bic) {
+        max_bic <- current_max_bic
+        best_model <- model_name
+      }
+    }
+  }
+  
+  summary_table <- rbind(summary_table, data.frame(G = G, Highest_BIC = max_bic, Model_Name = best_model))
+}
+
+# Print the summary table
+print(summary_table)
+
+
+
+```
+
+`The BIC is a criterion for model selection among a finite set of models. The model with the lowest BIC is generally preferred. However, in this context, we are looking at the highest BIC values to evaluate the fit of different clustering models.
+
+By running the clustering algorithm multiple times for each model and cluster size, we can assess the stability of the BIC values. If the BIC values for a particular combination of G and model name are consistent across repetitions, this indicates that the model fit is stable. Conversely, if the BIC values vary significantly, this suggests that the model fit is less reliable.``
+
