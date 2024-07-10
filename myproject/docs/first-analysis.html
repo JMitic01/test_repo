@@ -1,0 +1,1263 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="Jovana Mitic" />
+
+<meta name="date" content="2024-07-10" />
+
+<title>first-analysis_SA15</title>
+
+<script src="site_libs/header-attrs-2.25/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.13.2/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/font-awesome-6.4.2/css/all.min.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-6.4.2/css/v4-shims.min.css" rel="stylesheet" />
+
+<link rel="icon" href="https://github.com/workflowr/workflowr-assets/raw/main/img/reproducible.png">
+<!-- Add a small amount of space between sections. -->
+<style type="text/css">
+div.section {
+  padding-top: 12px;
+}
+</style>
+
+
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">myproject</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="about.html">About</a>
+</li>
+<li>
+  <a href="license.html">License</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/JMitic01/test_repo">
+    <span class="fab fa-github"></span>
+     
+    Source code
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">first-analysis_SA15</h1>
+<h4 class="author">Jovana Mitic</h4>
+<h4 class="date">2024-07-10</h4>
+
+</div>
+
+
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-report" data-toggle="collapse" data-target="#workflowr-report">
+<span class="glyphicon glyphicon-list" aria-hidden="true"></span>
+workflowr <span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span>
+</button>
+</p>
+<div id="workflowr-report" class="collapse">
+<ul class="nav nav-tabs">
+<li class="active">
+<a data-toggle="tab" href="#summary">Summary</a>
+</li>
+<li>
+<a data-toggle="tab" href="#checks"> Checks <span
+class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
+</a>
+</li>
+<li>
+<a data-toggle="tab" href="#versions">Past versions</a>
+</li>
+</ul>
+<div class="tab-content">
+<div id="summary" class="tab-pane fade in active">
+<p>
+<strong>Last updated:</strong> 2024-07-10
+</p>
+<p>
+<strong>Checks:</strong> <span
+class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7
+<span class="glyphicon glyphicon-exclamation-sign text-danger"
+aria-hidden="true"></span> 0
+</p>
+<p>
+<strong>Knit directory:</strong> <code>myproject/</code> <span
+class="glyphicon glyphicon-question-sign" aria-hidden="true"
+title="This is the local directory in which the code in this file was executed.">
+</span>
+</p>
+<p>
+This reproducible <a href="https://rmarkdown.rstudio.com">R Markdown</a>
+analysis was created with <a
+  href="https://github.com/workflowr/workflowr">workflowr</a> (version
+1.7.1). The <em>Checks</em> tab describes the reproducibility checks
+that were applied when the results were created. The <em>Past
+versions</em> tab lists the development history.
+</p>
+<hr>
+</div>
+<div id="checks" class="tab-pane fade">
+<div id="workflowr-checks" class="panel-group">
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguptodate">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>R Markdown file:</strong> up-to-date
+</a>
+</p>
+</div>
+<div id="strongRMarkdownfilestronguptodate"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great! Since the R Markdown file has been committed to the Git
+repository, you know the exact version of the code that produced these
+results.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongEnvironmentstrongempty">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Environment:</strong> empty </a>
+</p>
+</div>
+<div id="strongEnvironmentstrongempty" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! The global environment was empty. Objects defined in the
+global environment can affect the analysis in your R Markdown file in
+unknown ways. For reproduciblity it’s best to always run the code in an
+empty environment.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSeedstrongcodesetseed20240710code">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Seed:</strong>
+<code>set.seed(20240710)</code> </a>
+</p>
+</div>
+<div id="strongSeedstrongcodesetseed20240710code"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>The command <code>set.seed(20240710)</code> was run prior to running
+the code in the R Markdown file. Setting a seed ensures that any results
+that rely on randomness, e.g. subsampling or permutations, are
+reproducible.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSessioninformationstrongrecorded">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Session information:</strong>
+recorded </a>
+</p>
+</div>
+<div id="strongSessioninformationstrongrecorded"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Recording the operating system, R version, and package
+versions is critical for reproducibility.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongCachestrongnone">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Cache:</strong> none </a>
+</p>
+</div>
+<div id="strongCachestrongnone" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Nice! There were no cached chunks for this analysis, so you can be
+confident that you successfully produced the results during this
+run.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongFilepathsstrongrelative">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>File paths:</strong> relative </a>
+</p>
+</div>
+<div id="strongFilepathsstrongrelative" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Using relative paths to the files within your workflowr
+project makes it easier to run your code on other machines.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomJMitic01testrepotreed66e31b70a4ac70d501a1d61bee3b0e7f45dc9b0targetblankd66e31ba">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Repository version:</strong>
+<a href="https://github.com/JMitic01/test_repo/tree/d66e31b70a4ac70d501a1d61bee3b0e7f45dc9b0" target="_blank">d66e31b</a>
+</a>
+</p>
+</div>
+<div
+id="strongRepositoryversionstrongahrefhttpsgithubcomJMitic01testrepotreed66e31b70a4ac70d501a1d61bee3b0e7f45dc9b0targetblankd66e31ba"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>
+Great! You are using Git for version control. Tracking code development
+and connecting the code version to the results is critical for
+reproducibility.
+</p>
+<p>
+The results in this page were generated with repository version
+<a href="https://github.com/JMitic01/test_repo/tree/d66e31b70a4ac70d501a1d61bee3b0e7f45dc9b0" target="_blank">d66e31b</a>.
+See the <em>Past versions</em> tab to see a history of the changes made
+to the R Markdown and HTML files.
+</p>
+<p>
+Note that you need to be careful to ensure that all relevant files for
+the analysis have been committed to Git prior to generating the results
+(you can use <code>wflow_publish</code> or
+<code>wflow_git_commit</code>). workflowr only checks the R Markdown
+file, but you know if there are other scripts or data files that it
+depends on. Below is the status of the Git repository when the results
+were generated:
+</p>
+<pre><code>
+Ignored files:
+    Ignored:    .Rproj.user/
+
+</code></pre>
+<p>
+Note that any generated files, e.g. HTML, png, CSS, etc., are not
+included in this status report because it is ok for generated content to
+have uncommitted changes.
+</p>
+</div>
+</div>
+</div>
+</div>
+<hr>
+</div>
+<div id="versions" class="tab-pane fade">
+
+<p>
+These are the previous versions of the repository in which changes were
+made to the R Markdown
+(<code>myproject/analysis/first-analysis.Rmd</code>) and HTML
+(<code>myproject/docs/first-analysis.html</code>) files. If you’ve
+configured a remote Git repository (see <code>?wflow_git_remote</code>),
+click on the hyperlinks in the table below to view the files as they
+were in that past version.
+</p>
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+File
+</th>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+<th>
+Message
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/JMitic01/test_repo/blob/d66e31b70a4ac70d501a1d61bee3b0e7f45dc9b0/myproject/analysis/first-analysis.Rmd" target="_blank">d66e31b</a>
+</td>
+<td>
+Jovana Mitic
+</td>
+<td>
+2024-07-10
+</td>
+<td>
+wflow_publish(c("analysis/first-analysis.Rmd"))
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<hr>
+</div>
+</div>
+</div>
+<div id="introduction" class="section level2">
+<h2>Introduction</h2>
+<pre class="r"><code>library(MASS)</code></pre>
+<pre><code>Warning: package &#39;MASS&#39; was built under R version 4.3.2</code></pre>
+<pre class="r"><code>library(mclust)</code></pre>
+<pre><code>Warning: package &#39;mclust&#39; was built under R version 4.3.2</code></pre>
+<pre><code>Package &#39;mclust&#39; version 6.0.1
+Type &#39;citation(&quot;mclust&quot;)&#39; for citing this R package in publications.</code></pre>
+<pre class="r"><code>library(ggplot2)</code></pre>
+<pre><code>Warning: package &#39;ggplot2&#39; was built under R version 4.3.2</code></pre>
+<pre class="r"><code>library(dplyr)</code></pre>
+<pre><code>
+Attaching package: &#39;dplyr&#39;</code></pre>
+<pre><code>The following object is masked from &#39;package:MASS&#39;:
+
+    select</code></pre>
+<pre><code>The following objects are masked from &#39;package:stats&#39;:
+
+    filter, lag</code></pre>
+<pre><code>The following objects are masked from &#39;package:base&#39;:
+
+    intersect, setdiff, setequal, union</code></pre>
+<pre class="r"><code>library(purrr)</code></pre>
+<pre><code>Warning: package &#39;purrr&#39; was built under R version 4.3.2</code></pre>
+<pre><code>
+Attaching package: &#39;purrr&#39;</code></pre>
+<pre><code>The following object is masked from &#39;package:mclust&#39;:
+
+    map</code></pre>
+<pre class="r"><code>library(knitr)</code></pre>
+<pre><code>Warning: package &#39;knitr&#39; was built under R version 4.3.2</code></pre>
+<pre class="r"><code>library(reshape2)</code></pre>
+<pre><code>Warning: package &#39;reshape2&#39; was built under R version 4.3.2</code></pre>
+<pre class="r"><code>library(gridExtra)</code></pre>
+<pre><code>Warning: package &#39;gridExtra&#39; was built under R version 4.3.3</code></pre>
+<pre><code>
+Attaching package: &#39;gridExtra&#39;</code></pre>
+<pre><code>The following object is masked from &#39;package:dplyr&#39;:
+
+    combine</code></pre>
+<pre class="r"><code>big_data &lt;- read.table(&quot;C:/Users/jovan/Downloads/FallData_all.txt&quot;, header = TRUE)
+subject &lt;- &quot;SA15&quot;
+selected_variables &lt;- c(&quot;max&quot;, &quot;min&quot;, &quot;max_diff&quot;)
+subject_data &lt;- subset(big_data, Subject == subject)
+selected_data &lt;- subject_data[, selected_variables]
+output_directory &lt;- &#39;C:/Users/jovan/OneDrive/Desktop/Stat Reading Group&#39;
+
+# Create ggplot2 plots
+plot1 &lt;- ggplot(selected_data, aes(x = max, y = min)) +
+  geom_point(size = 2) +
+  labs(title = paste(&quot;Data for subject&quot;, subject),
+       x = &quot;Max&quot;,
+       y = &quot;Min&quot;) +
+  theme_minimal()
+
+plot2 &lt;- ggplot(selected_data, aes(x = min, y = max_diff)) +
+  geom_point(size = 2) +
+  labs(title = paste(&quot;Data for subject&quot;, subject),
+       x = &quot;Min&quot;,
+       y = &quot;Max_diff&quot;) +
+  theme_minimal()
+
+plot3 &lt;- ggplot(selected_data, aes(x = max, y = max_diff)) +
+  geom_point(size = 2) +  # Increase point size for better visibility
+  labs(title = paste(&quot;Data for subject&quot;, subject),
+       x = &quot;Max&quot;,
+       y = &quot;Max_diff&quot;) +
+  theme_minimal() +
+  guides(shape = guide_legend(override.aes = list(size = 2)))  # Adjust legend size
+grid.arrange(plot1, plot2,plot3, ncol = 3)</code></pre>
+<p><img src="figure/first-analysis.Rmd/plot-data-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>G_values &lt;- 1:10
+model_names &lt;- c(&quot;EVI&quot;, &quot;EEI&quot;, &quot;EEV&quot;, &quot;VVV&quot;, &quot;EII&quot;)
+best_bic &lt;- -Inf
+best_G &lt;- NULL
+best_model_name &lt;- NULL
+
+for (model_name in model_names) {
+  for (G in G_values) {
+    result &lt;- tryCatch(Mclust(selected_data, G = G, modelName = model_name), error = function(e) NULL)
+    if (!is.null(result) &amp;&amp; !is.null(result$BIC) &amp;&amp; result$BIC &gt; best_bic) {
+      best_bic &lt;- result$BIC
+      best_G &lt;- G
+      best_model_name &lt;- model_name
+    }
+  }
+}
+
+best_G</code></pre>
+<pre><code>[1] 6</code></pre>
+<pre class="r"><code>best_model_name</code></pre>
+<pre><code>[1] &quot;EVI&quot;</code></pre>
+<p>In the analysis of the data for subject SA15, we aimed to identify
+the best clustering model using the Mclust algorithm, which fits
+Gaussian finite mixture models to the data. The model selection was
+based on the Bayesian Information Criterion (BIC) values obtained for
+different combinations of model types and the number of clusters
+(G).</p>
+<p>After evaluating various models and cluster counts, the model with
+the highest BIC value was identified as the EVI model with 6 clusters.
+EVI Model Description: The covariance matrices are ellipsoidal, meaning
+each cluster can have its own general shape (ellipsoids) which allows
+for modeling of data with different variances and covariances in
+different directions. Equal Volume: All clusters have the same volume.
+This constraint is reflected in the determinant of the covariance matrix
+being equal across all clusters. Equal Shape: All clusters have the same
+shape. This means that the eigenvalues of the covariance matrices, after
+adjusting for volume, are the same for all clusters. Variable
+Orientation: The orientation of the ellipsoids can vary between
+clusters. This means that the eigenvectors (directions of the principal
+components) can be different for different clusters.\</p>
+<pre class="r"><code>result &lt;- Mclust(selected_data, G = 6, modelName = &quot;EVI&quot;)
+cluster_labels &lt;- result$classification
+
+
+plot1 &lt;- ggplot(selected_data, aes(x = max, y = min, color = as.factor(cluster_labels))) +
+  geom_point(size = 2) +  # Increase point size for better visibility
+  scale_color_discrete(name = &quot;Cluster Labels&quot;) +
+  labs(title = &quot;Max vs Min&quot;) +
+  theme_minimal() +
+  guides(shape = guide_legend(override.aes = list(size = 2)))  # Adjust legend size
+
+plot2 &lt;- ggplot(selected_data, aes(x = min, y = max_diff, color = as.factor(cluster_labels))) +
+  geom_point(size = 2) +  # Increase point size for better visibility
+  scale_color_discrete(name = &quot;Cluster Labels&quot;) +
+  labs(title = &quot;Min vs Max_diff&quot;) +
+  theme_minimal() +
+  guides(shape = guide_legend(override.aes = list(size = 2)))  # Adjust legend size
+
+plot3 &lt;- ggplot(selected_data, aes(x = max, y = max_diff, color = as.factor(cluster_labels))) +
+  geom_point(size = 2) +  # Increase point size for better visibility
+  scale_color_discrete(name = &quot;Cluster Labels&quot;) +
+  labs(title = &quot;Max vs Max_diff&quot;) +
+  theme_minimal() +
+  guides(shape = guide_legend(override.aes = list(size = 2)))
+print(plot3)</code></pre>
+<p><img src="figure/first-analysis.Rmd/plot-best-clustering-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>print(plot2)</code></pre>
+<p><img src="figure/first-analysis.Rmd/plot-best-clustering-2.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>print(plot1)</code></pre>
+<p><img src="figure/first-analysis.Rmd/plot-best-clustering-3.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>par(mfrow=c(1,2), cex=0.7, mar=c(3.1,4.1,1,0.5), mgp=c(1.8,0.5,0), bty=&quot;L&quot;, oma=c(0,0,1,0))
+
+
+# Uncertainty plot
+plot(result, what = &quot;uncertainty&quot;)</code></pre>
+<p><img src="figure/first-analysis.Rmd/uncertainty_plots-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># Classification plot with ellipses
+plot(result, what = &quot;classification&quot;)</code></pre>
+<p><img src="figure/first-analysis.Rmd/uncertainty_plots-2.png" width="672" style="display: block; margin: auto;" />
+The uncertainty Plot provides a visual representation of the uncertainty
+in the assignment of each data point to the identified clusters. Helps
+in understanding the spread and orientation of clusters using ellipses.
+Points with lighter colors are more uncertain in their cluster
+assignment, while darker points are more confidently assigned. High
+uncertainty in certain areas might suggest the presence of overlapping
+clusters or regions where the data does not distinctly separate into the
+specified number of clusters.\ The classification plot displays the data
+points color-coded by their assigned cluster, with ellipses representing
+the estimated boundaries of each cluster. These ellipses are derived
+from the Gaussian mixture model used in the clustering process, showing
+the spread and orientation of each cluster. Points within the same
+ellipse are more similar to each other than to points outside.</p>
+<pre class="r"><code>calculate_ari &lt;- function(n_fraction) {
+  n &lt;- nrow(selected_data)
+  n_subsample &lt;- floor(n * n_fraction)
+  
+  ari_values &lt;- numeric(20)
+  
+  for (i in 1:20) {
+    subset_indices &lt;- sample(1:n, n_subsample, replace = FALSE)
+    subset_data &lt;- selected_data[subset_indices, ]
+    subset_result &lt;- tryCatch(Mclust(subset_data, G = best_G, modelName = best_model_name), error = function(e) NULL)
+    
+    if (!is.null(subset_result) &amp;&amp; !is.null(subset_result$classification)) {
+      subset_classification &lt;- subset_result$classification
+      ari_values[i] &lt;- adjustedRandIndex(result$classification[subset_indices], subset_classification)
+    } else {
+      ari_values[i] &lt;- NA
+    }
+  }
+  
+  return(ari_values)
+}
+
+n_values &lt;- c(3/4, 1/2, 1/4)
+ari_results &lt;- map_df(n_values, function(n) {
+  ari &lt;- calculate_ari(n)
+  data.frame(n_fraction = rep(n, length(ari)), ARI = ari)
+})
+
+ari_results &lt;- ari_results %&gt;% filter(!is.na(ARI))
+print(ari_results)</code></pre>
+<pre><code>   n_fraction       ARI
+1        0.75 0.8384633
+2        0.75 0.9828375
+3        0.75 0.9007819
+4        0.75 0.9789122
+5        0.75 0.7474236
+6        0.75 0.7956667
+7        0.75 0.9795377
+8        0.75 0.9820510
+9        0.75 0.8811562
+10       0.75 1.0000000
+11       0.75 0.8074687
+12       0.75 0.9806015
+13       0.75 0.9605708
+14       0.75 0.9780965
+15       0.75 0.9606356
+16       0.75 0.9787294
+17       0.75 0.8781672
+18       0.75 0.9608339
+19       0.75 0.9240584
+20       0.75 0.6413719
+21       0.50 0.7246284
+22       0.50 0.4902066
+23       0.50 0.7100559
+24       0.50 0.7381106
+25       0.50 0.7585973
+26       0.50 0.7239753
+27       0.50 0.9405098
+28       0.50 0.8949592
+29       0.50 0.9672397
+30       0.50 0.8888839
+31       0.50 0.7672691
+32       0.50 0.9690877
+33       0.50 0.6660572
+34       0.50 0.6133686
+35       0.50 0.5388912
+36       0.50 0.9453551
+37       0.50 0.7907488
+38       0.50 0.9271390
+39       0.50 0.4934124
+40       0.50 0.9425552
+41       0.25 1.0000000
+42       0.25 1.0000000
+43       0.25 0.7122558
+44       0.25 0.6448880
+45       0.25 0.6542941
+46       0.25 0.6498107
+47       0.25 0.8141768
+48       0.25 0.8535310
+49       0.25 0.6848206
+50       0.25 0.7748408
+51       0.25 0.7820571
+52       0.25 0.7192939
+53       0.25 0.7416275
+54       0.25 0.9439128
+55       0.25 0.9411859
+56       0.25 1.0000000
+57       0.25 1.0000000
+58       0.25 0.8502523
+59       0.25 0.9289594
+60       0.25 1.0000000</code></pre>
+<p>The stability analysis conducted above provide insights into the
+robustness of the clustering algorithm across different subsample
+fractions (n_fraction) for a given dataset. The Adjusted Rand Index
+(ARI) values computed represent the degree of similarity between the
+clustering results obtained from subsets of the data.\ The Adjusted Rand
+Index (ARI) results provide insight into the stability and consistency
+of clustering as the size of the data fraction (n_fraction) changes.
+When n=0.75, the ARI values range from 0.5256939 to 1.0000000, with most
+values clustering around higher scores, indicating a generally stable
+clustering performance with some variability. When the data fraction is
+reduced to 0.50 the ARI scores range from 0.4307185 to 1.0000000,
+suggesting slightly less stability. Finally, at n=0.25, the ARI ranges
+from 0.5289797 to 1.0000000, and show a decrease in consistency compared
+to higher data fractions. This pattern indicates that while high ARI
+scores can still be achieved with smaller data fractions, the clustering
+performance becomes less stable and more sensitive to data size
+reduction.</p>
+<pre class="r"><code># Calculate the average ARI for each n_fraction
+average_ari &lt;- ari_results %&gt;%
+  group_by(n_fraction) %&gt;%
+  summarize(avg_ari = mean(ARI))
+
+# Plot ARI values against n values
+ggplot(ari_results, aes(x = as.factor(n_fraction), y = ARI)) +
+  geom_point(color = &quot;skyblue&quot;, size = 3) +
+  geom_point(data = average_ari, aes(y = avg_ari), color = &quot;red&quot;, size = 4, shape = 18) +
+  labs(x = &quot;n Fraction&quot;, y = &quot;ARI&quot;, title = &quot;ARI Values for G = 2&quot;) +
+  theme_minimal()</code></pre>
+<p><img src="figure/first-analysis.Rmd/plot-ari-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>Now, we will perform the same analysis but for G=3 (EEV), G=4 (VVV),
+and G=5 (EEV).</p>
+<pre class="r"><code>find_best_model &lt;- function(data, G) {
+  model_names &lt;- c(&quot;EVI&quot;, &quot;EEI&quot;, &quot;EEV&quot;, &quot;VVV&quot;, &quot;EII&quot;)
+  best_bic &lt;- -Inf
+  best_model_name &lt;- NULL
+
+  for (model_name in model_names) {
+    result &lt;- tryCatch(Mclust(data, G = G, modelName = model_name), error = function(e) NULL)
+    if (!is.null(result) &amp;&amp; !is.null(result$BIC) &amp;&amp; result$BIC &gt; best_bic) {
+      best_bic &lt;- result$BIC
+      best_model_name &lt;- model_name
+    }
+  }
+  
+  return(best_model_name)
+}
+G_values &lt;- 1:9
+best_models &lt;- list()
+
+for (G in G_values) {
+  best_model_name &lt;- find_best_model(selected_data, G)
+  best_models[[as.character(G)]] &lt;- best_model_name
+}
+
+# Print the best models for each G
+print(best_models)</code></pre>
+<pre><code>$`1`
+[1] &quot;EEV&quot;
+
+$`2`
+[1] &quot;EVI&quot;
+
+$`3`
+[1] &quot;EEV&quot;
+
+$`4`
+[1] &quot;VVV&quot;
+
+$`5`
+[1] &quot;EEV&quot;
+
+$`6`
+[1] &quot;EVI&quot;
+
+$`7`
+[1] &quot;EVI&quot;
+
+$`8`
+[1] &quot;EVI&quot;
+
+$`9`
+[1] &quot;EEI&quot;</code></pre>
+<pre class="r"><code>calculate_ari &lt;- function(n_fraction, G, best_model_name) {
+  n &lt;- nrow(selected_data)
+  n_subsample &lt;- floor(n * n_fraction)
+  
+  ari_values &lt;- numeric(20)
+  
+  for (i in 1:20) {
+    subset_indices &lt;- sample(1:n, n_subsample, replace = FALSE)
+    subset_data &lt;- selected_data[subset_indices, ]
+    subset_result &lt;- tryCatch(Mclust(subset_data, G = G, modelName = best_model_name), error = function(e) NULL)
+    
+    if (!is.null(subset_result) &amp;&amp; !is.null(subset_result$classification)) {
+      subset_classification &lt;- subset_result$classification
+      ari_values[i] &lt;- adjustedRandIndex(result$classification[subset_indices], subset_classification)
+    } else {
+      ari_values[i] &lt;- NA
+    }
+  }
+  
+  return(ari_values)
+}
+
+# Perform ARI stability analysis for different G values and subsample fractions
+n_values &lt;- c(3/4, 1/2, 1/4)
+ari_results_list &lt;- list()
+
+for (G in G_values) {
+  best_model_name &lt;- best_models[[as.character(G)]]
+  ari_results &lt;- map_df(n_values, function(n) {
+    ari &lt;- calculate_ari(n, G, best_model_name)
+    data.frame(n_fraction = rep(n, length(ari)), G = rep(G, length(ari)), ARI = ari)
+  })
+  ari_results_list[[as.character(G)]] &lt;- ari_results %&gt;% filter(!is.na(ARI))
+}
+
+# Combine results from all G values
+final_ari_results &lt;- bind_rows(ari_results_list)
+
+# Filter ARI results for each G value
+ari_results_G1 &lt;- final_ari_results %&gt;% filter(G == 1)
+ari_results_G2 &lt;- final_ari_results %&gt;% filter(G == 2)
+ari_results_G3 &lt;- final_ari_results %&gt;% filter(G == 3)
+ari_results_G4 &lt;- final_ari_results %&gt;% filter(G == 4)
+ari_results_G5 &lt;- final_ari_results %&gt;% filter(G == 5)
+ari_results_G6 &lt;- final_ari_results %&gt;% filter(G == 6)
+ari_results_G7 &lt;- final_ari_results %&gt;% filter(G == 7)
+ari_results_G8 &lt;- final_ari_results %&gt;% filter(G == 8)
+ari_results_G9 &lt;- final_ari_results %&gt;% filter(G == 9)
+
+
+
+# Print the ARI results for each G value
+#print(&quot;ARI results for G = 3:&quot;)
+#print(ari_results_G3)
+
+#print(&quot;ARI results for G = 4:&quot;)
+#print(ari_results_G4)
+
+#print(&quot;ARI results for G = 5:&quot;)
+#print(ari_results_G5)
+
+# Plot the ARI results
+ggplot(final_ari_results, aes(x = as.factor(G), y = ARI, fill = as.factor(n_fraction))) +
+  geom_boxplot() +
+  labs(title = &quot;ARI Stability Analysis for Different G Values&quot;,
+       x = &quot;Number of Components (G)&quot;,
+       y = &quot;Adjusted Rand Index (ARI)&quot;,
+       fill = &quot;Subsample Fraction&quot;) +
+  theme_minimal()</code></pre>
+<p><img src="figure/first-analysis.Rmd/ari_moreGvalues-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>`</p>
+<pre class="r"><code>library(mclust)
+
+# Load the data
+big_data &lt;- read.table(&#39;C:/Users/jovan/Downloads/FallData_all.txt&#39;, header = TRUE)
+se05_data &lt;- subset(big_data, Subject == &quot;SA15&quot;)
+selected_variables &lt;- c(&quot;max&quot;, &quot;min&quot;, &quot;max_diff&quot;)
+se05_selected_data &lt;- se05_data[, selected_variables]
+
+# Define parameters
+G_values &lt;- c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
+num_repetitions &lt;- 10
+model_names &lt;- c(&quot;EVI&quot;, &quot;EEI&quot;, &quot;EEV&quot;, &quot;VVV&quot;, &quot;EII&quot;)
+bic_values_list &lt;- list()
+
+# Loop over each model name and G value
+for (model_name in model_names) {
+  for (G in G_values) {
+    bic_values &lt;- numeric(num_repetitions)
+    
+    # Loop over each repetition
+    for (rep in 1:num_repetitions) {
+      # Error handling for Mclust function
+      tryCatch({
+        result &lt;- Mclust(se05_selected_data, G = G, modelName = model_name)
+        if (!is.null(result$BIC) &amp;&amp; is.numeric(result$BIC)) {
+          bic_values[rep] &lt;- round(result$BIC, digits = 1)  # Round to the nearest tenth
+        } else {
+          bic_values[rep] &lt;- NA  # Assign NA if result$BIC is not numeric or NULL
+        }
+      }, error = function(e) {
+        bic_values[rep] &lt;- NA  # Assign NA if there&#39;s an error
+      })
+    }
+    
+    bic_values_list[[paste(model_name, &quot;_G&quot;, G, sep = &quot;&quot;)]] &lt;- bic_values
+  }
+}
+
+# Initialize the summary table
+summary_table &lt;- data.frame(G = integer(), Highest_BIC = numeric(), Model_Name = character(), stringsAsFactors = FALSE)
+
+# Populate the summary table
+for (G in G_values) {
+  max_bic &lt;- -Inf
+  best_model &lt;- NA
+  
+  for (model_name in model_names) {
+    key &lt;- paste(model_name, &quot;_G&quot;, G, sep = &quot;&quot;)
+    bic_values &lt;- bic_values_list[[key]]
+    
+    if (!is.null(bic_values) &amp;&amp; any(!is.na(bic_values))) {
+      current_max_bic &lt;- max(bic_values, na.rm = TRUE)
+      if (current_max_bic &gt; max_bic) {
+        max_bic &lt;- current_max_bic
+        best_model &lt;- model_name
+      }
+    }
+  }
+  
+  summary_table &lt;- rbind(summary_table, data.frame(G = G, Highest_BIC = max_bic, Model_Name = best_model))
+}
+
+# Print the summary table
+print(summary_table)</code></pre>
+<pre><code>    G Highest_BIC Model_Name
+1   1     -7729.6        EEV
+2   2     -7644.8        EVI
+3   3     -7599.1        EEV
+4   4     -7550.9        VVV
+5   5     -7514.0        EEV
+6   6     -7507.0        EVI
+7   7     -7530.7        EVI
+8   8     -7531.4        EVI
+9   9     -7517.5        EEI
+10 10     -7524.5        EEI</code></pre>
+<p>`The BIC is a criterion for model selection among a finite set of
+models. The model with the lowest BIC is generally preferred. However,
+in this context, we are looking at the highest BIC values to evaluate
+the fit of different clustering models.</p>
+<p>By running the clustering algorithm multiple times for each model and
+cluster size, we can assess the stability of the BIC values. If the BIC
+values for a particular combination of G and model name are consistent
+across repetitions, this indicates that the model fit is stable.
+Conversely, if the BIC values vary significantly, this suggests that the
+model fit is less reliable.``</p>
+<br>
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
+<span class="glyphicon glyphicon-wrench" aria-hidden="true"></span>
+Session information
+</button>
+</p>
+<div id="workflowr-sessioninfo" class="collapse">
+<pre class="r"><code>sessionInfo()</code></pre>
+<pre><code>R version 4.3.1 (2023-06-16 ucrt)
+Platform: x86_64-w64-mingw32/x64 (64-bit)
+Running under: Windows 11 x64 (build 22631)
+
+Matrix products: default
+
+
+locale:
+[1] LC_COLLATE=English_United States.utf8 
+[2] LC_CTYPE=English_United States.utf8   
+[3] LC_MONETARY=English_United States.utf8
+[4] LC_NUMERIC=C                          
+[5] LC_TIME=English_United States.utf8    
+
+time zone: Europe/Budapest
+tzcode source: internal
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base     
+
+other attached packages:
+[1] gridExtra_2.3   reshape2_1.4.4  knitr_1.45      purrr_1.0.2    
+[5] dplyr_1.1.2     ggplot2_3.4.4   mclust_6.0.1    MASS_7.3-60.0.1
+[9] workflowr_1.7.1
+
+loaded via a namespace (and not attached):
+ [1] sass_0.4.8        utf8_1.2.3        generics_0.1.3    stringi_1.8.3    
+ [5] digest_0.6.34     magrittr_2.0.3    evaluate_0.23     grid_4.3.1       
+ [9] fastmap_1.1.1     plyr_1.8.8        rprojroot_2.0.4   jsonlite_1.8.8   
+[13] processx_3.8.3    whisker_0.4.1     ps_1.7.6          promises_1.2.1   
+[17] httr_1.4.7        fansi_1.0.4       scales_1.3.0      jquerylib_0.1.4  
+[21] cli_3.6.1         rlang_1.1.1       munsell_0.5.0     withr_2.5.0      
+[25] cachem_1.0.8      yaml_2.3.8        tools_4.3.1       colorspace_2.1-0 
+[29] httpuv_1.6.14     vctrs_0.6.3       R6_2.5.1          lifecycle_1.0.3  
+[33] git2r_0.33.0      stringr_1.5.1     fs_1.6.3          pkgconfig_2.0.3  
+[37] callr_3.7.3       pillar_1.9.0      bslib_0.6.1       later_1.3.2      
+[41] gtable_0.3.4      glue_1.6.2        Rcpp_1.0.12       highr_0.10       
+[45] xfun_0.41         tibble_3.2.1      tidyselect_1.2.0  rstudioapi_0.15.0
+[49] farver_2.1.1      htmltools_0.5.7   labeling_0.4.3    rmarkdown_2.25   
+[53] compiler_4.3.1    getPass_0.2-4    </code></pre>
+</div>
+</div>
+
+
+<!-- Adjust MathJax settings so that all math formulae are shown using
+TeX fonts only; see
+https://docs.mathjax.org/en/latest/web/configuration.html. This will make
+the presentation more consistent at the cost of the webpage sometimes
+taking slightly longer to load. Note that this only works because the
+footer is added to webpages before the MathJax javascript. -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    "HTML-CSS": { availableFonts: ["TeX"] }
+  });
+</script>
+
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
