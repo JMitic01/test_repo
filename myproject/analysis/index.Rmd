@@ -10,3 +10,4 @@ editor_options:
 
 Welcome to my research website. Here I will put overwiew of the things I read so far
 Click on this [link](first-analysis.html) to see my results.
+Click on this [link](methods.html) to read about methods I used results.
