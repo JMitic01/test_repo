@@ -1,0 +1,13 @@
+---
+title: "methods"
+author: "JMitic01"
+date: "2024-07-17"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+## Introduction
+similarly what I wrote in individual subjects test about all methods i was doing 
+```
+
