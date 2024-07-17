@@ -1,13 +1,25 @@
 ---
-title: "methods"
-author: "JMitic01"
-date: "2024-07-17"
-output: workflowr::wflow_html
+title: "Methods"
+site: workflowr::wflow_site
+output:
+  workflowr::wflow_html:
+    toc: false
 editor_options:
   chunk_output_type: console
 ---
 
 ## Introduction
-similarly what I wrote in individual subjects test about all methods i was doing 
-```
+In the analysis of the data for each subject, we aimed to identify the best clustering model using the Mclust algorithm, which fits Gaussian finite mixture models to the data. The model selection was based on the Bayesian Information Criterion (BIC) values obtained for different combinations of model types and the number of clusters (G).\\
+After evaluating various models and cluster counts, we used the model with the highest BIC value and provided a visual representation of the uncertainty in the assignment of each data point to the identified clusters. Points with lighter colors are more uncertain in their cluster assignment, while darker points are more confidently assigned. High uncertainty in certain areas might suggest the presence of overlapping clusters or regions where the data does not distinctly separate into the specified number of clusters.\\
+Furthermore, we used the classification plot to display the data points color-coded by their assigned cluster, with ellipses representing the estimated boundaries of each cluster. These ellipses are derived from the Gaussian mixture model used in the clustering process, showing the spread and orientation of each cluster. Points within the same ellipse are more similar to each other than to points outside.
+## ARI results
+The Adjusted Rand Index (ARI) results provide insight into the stability and consistency of clustering as the size of the data fraction (n_fraction) changes. We computed the ARI values for (G=1 to G=best one) to assess the stability of the cluster. Overall,the pattern we noticed indicates that while high ARI scores can still be achieved with smaller data fractions, the clustering performance becomes less stable and more sensitive to data size reduction.
+
+## BIC 
+`The BIC is a criterion for model selection among a finite set of models. The model with the lowest BIC is generally preferred. However, in this context, we are looking at the highest BIC values to evaluate the fit of different clustering models.
+
+By running the clustering algorithm multiple times for each model and cluster size, we can assess the stability of the BIC values. If the BIC values for a particular combination of G and model name are consistent across repetitions, this indicates that the model fit is stable. Conversely, if the BIC values vary significantly, this suggests that the model fit is less reliable.``
+
+
+
 

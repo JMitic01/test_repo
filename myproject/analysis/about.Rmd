@@ -1,5 +1,5 @@
 ---
-title: "About"
+title: "Overview of the Fall Data Set"
 output:
   workflowr::wflow_html:
     toc: false
@@ -7,4 +7,5 @@ editor_options:
   chunk_output_type: console
 ---
 
-Describe your project.
+Describe your data set
+
