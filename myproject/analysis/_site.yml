@@ -12,7 +12,7 @@ navbar:
   right:
   - icon: fab fa-github
     text: Source code
-    href: https://github.com/JMitic01/test_repo
+    href: https://github.com/JMitic/test_repo
 output:
   workflowr::wflow_html:
     toc: yes
