@@ -7,5 +7,4 @@ editor_options:
   chunk_output_type: console
 ---
 
-Describe your data set
-
+Choosing an appropriate mixture model for a dataset remains a challenge, in spite of many proposed criteria for making the selection. Our focus will be on measuring cluster stability as a measure of a model’s goodness of fit.

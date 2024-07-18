@@ -8,9 +8,14 @@ editor_options:
   chunk_output_type: console
 ---
 Welcome to my research website.
-##Introduction: 
-Choosing an appropriate mixture model for a dataset remains a challenge, in spite of many proposed criteria for making the selection. Our focus will be on measuring cluster stability as a measure of a model’s goodness of fit.
-Here I will put overwiew of the things I read so far:
-Click on this [link](first-analysis.html) to see my results.
-Click on this [link](methods.html) to read about methods I used.
+##Overview: 
+Here I will put overwiew of the things I read so far:\\
+##Fall Data Set
+Click on this link to read about Fall Data Set\\
+##Stability measures
+Click on this [link](methods.html) to read about methods I used.\\
+##BIC Method
+Click on this link to read about bic method\\
+##Results
+Click on this [link](first-analysis.html) to see my results.\\
 
