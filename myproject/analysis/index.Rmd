@@ -8,14 +8,25 @@ editor_options:
   chunk_output_type: console
 ---
 Welcome to my research website.
+
 ##Overview: 
+
 Here I will put overwiew of the things I read so far:\\
+
 ##Fall Data Set
+
 Click on this link to read about Fall Data Set\\
+
 ##Stability measures
+
 Click on this [link](methods.html) to read about methods I used.\\
+
 ##BIC Method
+
 Click on this link to read about bic method\\
+
 ##Results
+
+
 Click on this [link](first-analysis.html) to see my results.\\
 
