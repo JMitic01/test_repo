@@ -1,5 +1,5 @@
 ---
-title: "Home and Oveview"
+title: "Home"
 site: workflowr::wflow_site
 output:
   workflowr::wflow_html:
@@ -7,7 +7,10 @@ output:
 editor_options:
   chunk_output_type: console
 ---
-
-Welcome to my research website. Here I will put overwiew of the things I read so far
+Welcome to my research website.
+##Introduction: 
+Choosing an appropriate mixture model for a dataset remains a challenge, in spite of many proposed criteria for making the selection. Our focus will be on measuring cluster stability as a measure of a model’s goodness of fit.
+Here I will put overwiew of the things I read so far:
 Click on this [link](first-analysis.html) to see my results.
-Click on this [link](methods.html) to read about methods I used results.
+Click on this [link](methods.html) to read about methods I used.
+
